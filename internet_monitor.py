@@ -8,7 +8,7 @@ from ping3 import ping
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-file_handler = RotatingFileHandler('internet_monitor.log', maxBytes=50*1024*1024, backupCount=5)
+file_handler = RotatingFileHandler('internet_monitor.log', maxBytes=50*1024*1024, backupCount=5, encoding='utf-8')
 file_handler.setLevel(logging.INFO)
 
 console_handler = logging.StreamHandler()
