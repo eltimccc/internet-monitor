@@ -8,7 +8,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 
-# Настройка логгера
+
 def setup_logger():
     logger = logging.getLogger("InternetMonitor")
     logger.setLevel(logging.INFO)
@@ -29,7 +29,7 @@ def setup_logger():
 
 
 logger = setup_logger()
-monitoring = False  # Глобальная переменная для состояния мониторинга
+monitoring = False
 
 
 def monitor_internet():
@@ -42,12 +42,12 @@ def monitor_internet():
                 logger.warning(f"Ошибка доступа к Google: статус {response.status_code}.")
         except requests.RequestException:
             logger.error("Интернет пропал.")
-        time.sleep(60)
+        time.sleep(5)
 
 
 def toggle_monitoring():
     global monitoring
-    monitoring = not monitoring  # Переключение состояния
+    monitoring = not monitoring
     if monitoring:
         logger.info("Мониторинг запущен.")
         threading.Thread(target=monitor_internet, daemon=True).start()
@@ -60,25 +60,21 @@ def toggle_monitoring():
 def on_closing():
     if messagebox.askokcancel("Выход", "Вы уверены, что хотите выйти?"):
         global monitoring
-        monitoring = False  # Останавливаем мониторинг перед выходом
+        monitoring = False 
         root.destroy()
 
 
-# Интерфейс Tkinter
 root = tk.Tk()
 root.title("Монитор интернета")
-root.geometry("300x150")  # Устанавливаем размер окна
-root.resizable(False, False)  # Запрещаем изменение размеров окна
+root.geometry("300x150")
+root.resizable(False, False)
 
-# Стили для кнопок
 style = ttk.Style()
 style.configure("Start.TButton", font=("Helvetica", 12), foreground="green")
 style.configure("Stop.TButton", font=("Helvetica", 12), foreground="red")
 
-# Кнопка для управления мониторингом
 toggle_button = ttk.Button(root, text="Запустить мониторинг", style="Start.TButton", command=toggle_monitoring)
 toggle_button.pack(pady=40)
 
-# Обработка закрытия окна
 root.protocol("WM_DELETE_WINDOW", on_closing)
 root.mainloop()
