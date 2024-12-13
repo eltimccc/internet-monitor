@@ -42,7 +42,7 @@ def monitor_internet():
                 logger.warning(f"Ошибка доступа к Google: статус {response.status_code}.")
         except requests.RequestException:
             logger.error("Интернет пропал.")
-        time.sleep(5)
+        time.sleep(300)
 
 
 def toggle_monitoring():
