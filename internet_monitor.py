@@ -30,6 +30,7 @@ def setup_logger():
 
 logger = setup_logger()
 monitoring = False
+monitor_thread = None
 
 
 def monitor_internet():
@@ -42,25 +43,29 @@ def monitor_internet():
                 logger.warning(f"Ошибка доступа к Google: статус {response.status_code}.")
         except requests.RequestException:
             logger.error("Интернет пропал.")
-        time.sleep(300)
+        time.sleep(180)
 
 
 def toggle_monitoring():
-    global monitoring
-    monitoring = not monitoring
+    global monitoring, monitor_thread
+
     if monitoring:
-        logger.info("Мониторинг запущен.")
-        threading.Thread(target=monitor_internet, daemon=True).start()
-        toggle_button.config(text="Остановить мониторинг", style="Stop.TButton")
-    else:
+        monitoring = False
         logger.info("Мониторинг остановлен.")
         toggle_button.config(text="Запустить мониторинг", style="Start.TButton")
+    else:
+        monitoring = True
+        if not monitor_thread or not monitor_thread.is_alive():
+            monitor_thread = threading.Thread(target=monitor_internet, daemon=True)
+            monitor_thread.start()
+        logger.info("Мониторинг запущен.")
+        toggle_button.config(text="Остановить мониторинг", style="Stop.TButton")
 
 
 def on_closing():
     if messagebox.askokcancel("Выход", "Вы уверены, что хотите выйти?"):
         global monitoring
-        monitoring = False 
+        monitoring = False
         root.destroy()
 
 
